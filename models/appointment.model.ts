@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { locationSchema } from './locations';
+import IAppointment from "../interfaces/appointments.interface";
 
 //create schema object
 const appointmentSchema = new mongoose.Schema({
@@ -23,11 +23,16 @@ const appointmentSchema = new mongoose.Schema({
     },
     description:{
         type: String,
+        maxLength: 500
     },
-    //1:1 embedded relationships
-    location: locationSchema,
-    // clinic: clinicSchema,
+
+    //1:many child ref relationship
+    clinic: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "clinics"
+    }
 });
 
 //mapping
-mongoose.model("appointments",appointmentSchema);
+export default mongoose.model <IAppointment> ("appointments",appointmentSchema);

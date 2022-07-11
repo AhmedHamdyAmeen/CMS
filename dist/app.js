@@ -3,24 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require('dotenv').config();
-// const express = require("express");
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const config_1 = __importDefault(require("./config/config"));
 /************ routes */
-const employeeRoute_1 = require("./routes/employeeRoute");
-const appointmentRoute_1 = require("./routes/appointmentRoute");
-/************ */
-// const dbUrl: string = process.env.DB_URL;
+const employee_route_1 = require("./routes/employee.route");
+const appointment_route_1 = require("./routes/appointment.route");
 //create server obejct
 const app = (0, express_1.default)();
-mongoose_1.default.connect("mongodb://localhost:27017/CMS")
+mongoose_1.default.connect(config_1.default.mongo.url, config_1.default.mongo.options)
     .then(() => {
     console.log("DB Connected.");
     //listen to port number
-    app.listen(process.env.PORT || 8080, () => {
+    app.listen(config_1.default.server.port, () => {
         console.log("Listening on localhost:8080");
     });
 })
@@ -32,8 +29,8 @@ app.use((0, morgan_1.default)('dev')); //method-url-status-ms- :res[content-leng
 app.use((0, cors_1.default)());
 /****************** Routes *****************/
 app.use(express_1.default.json()); //body parsing
-app.use(employeeRoute_1.employeeRoute);
-app.use(appointmentRoute_1.appointmentRoute);
+app.use(employee_route_1.employeeRoute);
+app.use(appointment_route_1.appointmentRoute);
 //3- Not Found MW
 app.use((request, response) => {
     console.log('Not Found MW');

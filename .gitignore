@@ -4,6 +4,7 @@ diagnostic.data/
 journal/
 */.vscode/
 resources/
+dist/
 
 # misc
 .env

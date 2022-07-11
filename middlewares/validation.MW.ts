@@ -1,8 +1,18 @@
-import { validationResult, ValidationError } from 'express-validator';
-import { Request, Response, NextFunction, Router } from 'express';
+import { validationResult, ValidationError } from "express-validator";
+import { Request, Response, NextFunction, Router } from "express";
 
-const validationMW = (request: Request, respone:Response, next:NextFunction) => {
-  const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {
+const validationMW = (
+  request: Request,
+  respone: Response,
+  next: NextFunction
+) => {
+  const errorFormatter = ({
+    location,
+    msg,
+    param,
+    value,
+    nestedErrors,
+  }: ValidationError) => {
     // Build your resulting errors however you want! String, object, whatever - it works!
     return `${location}[${param}]: ${msg}`;
   };
@@ -13,6 +23,5 @@ const validationMW = (request: Request, respone:Response, next:NextFunction) => 
     return respone.json({ errors: result.array() });
   }
 };
-
 
 export default validationMW;
