@@ -46,7 +46,6 @@ const doctorSchema = new Schema<IDoctor>({
   },
   fullName: {
     type: String,
-    unique: true,
     required: true,
   },
   department: {
@@ -57,6 +56,7 @@ const doctorSchema = new Schema<IDoctor>({
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: [validateEmail, "Please fill a valid email address"],
   },
   password: {
@@ -74,8 +74,7 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     enum: EGender,
   },
-  //apiontment:[apointmentSchema]
-  //patients:[patientSchema]
+  //appiontment:[appointmentSchema]
 });
 
 export default mongoose.model<IDoctor>("doctors", doctorSchema);
