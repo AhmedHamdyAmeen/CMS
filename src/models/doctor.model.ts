@@ -74,7 +74,7 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     enum: EGender,
   },
-  //appiontment:[appointmentSchema]
+  //appiontments:[appointmentSchema]
 });
 
 export default mongoose.model<IDoctor>("doctors", doctorSchema);

@@ -1,27 +1,24 @@
 import { Router } from "express";
 
 import { post, put, getDelete } from "../middlewares/prescription.MW";
-import {
-  createPrescription,
-  updatePrescription,
-  getPrescription,
-  getAllPrescriptions,
-  deletePrescription,
-} from "../controllers/prescription.controller";
+import { prescriptionController } from "../controllers/controllers.module";
 import resultValidator from "../middlewares/validation.MW";
+import { auth } from "../middlewares/auth.MW";
 
 const router = Router();
 
+router.use(auth);
+
 router
   .route("/")
-  .post(post, resultValidator, createPrescription) //doctor
-  .get(getAllPrescriptions);
+  .post(post, resultValidator, prescriptionController.createPrescription) //doctor
+  .get(prescriptionController.getAllPrescriptions); //receptionist
 
 router
   .route("/:id")
-  .put(put, resultValidator, updatePrescription) //doctor
+  .put(put, resultValidator, prescriptionController.updatePrescription) //??
   .all(getDelete, resultValidator)
-  .get(getPrescription)
-  .delete(deletePrescription); //doctor
+  .get(prescriptionController.getPrescription) //??
+  .delete(prescriptionController.deletePrescription); //??
 
 export default router;

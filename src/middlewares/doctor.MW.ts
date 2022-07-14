@@ -127,3 +127,26 @@ export let getDelete = [
     .isMongoId()
     .withMessage("doctor id should be mongoId"),
 ];
+
+export let login = [
+  (request: Request, response: Response, next: NextFunction) => {
+    console.log("validationMW");
+    next();
+  },
+  check("email")
+    .notEmpty()
+    .withMessage("doctor email is required")
+    .isEmail()
+    .withMessage("doctor email should be valid email"),
+  check("password")
+    .notEmpty()
+    .withMessage("doctor password is required")
+    .isString()
+    .withMessage("doctor password should be string"),
+  // .matches(
+  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/
+  // )
+  // .withMessage(
+  //   "doctor password should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+  // ),
+];
