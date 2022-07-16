@@ -12,13 +12,13 @@ router.use(auth);
 router
   .route("/")
   .post(post, resultValidator, prescriptionController.createPrescription) //doctor
-  .get(prescriptionController.getAllPrescriptions); //receptionist
+  .get(prescriptionController.getAllPrescriptions); //employee
 
 router
   .route("/:id")
-  .put(put, resultValidator, prescriptionController.updatePrescription) //??
+  .put(put, resultValidator, prescriptionController.updatePrescription) //doctor (his own prescription)
   .all(getDelete, resultValidator)
-  .get(prescriptionController.getPrescription) //??
-  .delete(prescriptionController.deletePrescription); //??
+  .get(prescriptionController.getPrescription) //employee & doctor (his own prescription)
+  .delete(prescriptionController.deletePrescription); //doctor (his own prescription)
 
 export default router;

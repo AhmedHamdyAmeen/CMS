@@ -9,7 +9,7 @@ export default class PrescriptionController {
     console.log("createPrescription controller");
     let object = new Prescription({
       _id: new mongoose.Types.ObjectId(),
-      doctor: request.body.doctor,
+      doctor: request.body.doctor, //will be taken from request.id
       patient: request.body.patient,
       medicines: request.body.medicines,
       date: request.body.date,
@@ -27,6 +27,10 @@ export default class PrescriptionController {
     Prescription.findOne({ _id: request.params.id })
       .then((data: any) => {
         if (!data) next(new Error("prescription not found"));
+        for (let prop in request.body) {
+          if (!(prop == "doctor" || prop == "patient"))
+            data[prop] = request.body[prop];
+        }
         return data.save().then((data: any) => {
           response.status(200).json({ msg: "prescription updated", data });
         });

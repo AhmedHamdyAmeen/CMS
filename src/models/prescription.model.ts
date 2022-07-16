@@ -1,16 +1,10 @@
 import mongoose, { Date, Types, Schema } from "mongoose";
 import medicinesSchema from "./medicines.model";
 
+import IPrescription from "../interfaces/prescription.interface";
+
 function itemsLimit(items: Array<Number>) {
   return items.length >= 1;
-}
-
-interface IPrescription {
-  _id: Types.ObjectId;
-  doctor: Types.ObjectId;
-  patient: Types.ObjectId;
-  medicines: Array<Object>;
-  date: Date;
 }
 
 const prescriptionSchema = new Schema<IPrescription>({

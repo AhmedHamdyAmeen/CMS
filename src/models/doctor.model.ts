@@ -1,43 +1,18 @@
 import mongoose from "mongoose";
 import { Types, Schema } from "mongoose";
 
+import IDoctor, { EDepartment, EGender } from "../interfaces/doctor.interface";
+
 let validateEmail = function (email: string) {
   let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return regex.test(email);
 };
 
-/****** 🔴rania ******/
+/****** 🟢rania ******/
 let validatePhoneNumber = function (phoneNumber: string) {
   let regex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/; //one form of phonenumber (-)
   return regex.test(phoneNumber);
 };
-
-enum EGender {
-  Male = "Male",
-  Female = "Female",
-}
-
-enum EDepartment {
-  Dermatology = "Dermatology",
-  Pathology = "Pathology",
-  Neorolgy = "Neorolgy",
-  Oncology = "Oncology",
-  ENT = "ENT",
-  Radiology = "Radiology",
-  Dentistry = "Dentistry",
-  Ophthalmology = "Ophthalmology",
-}
-
-interface IDoctor {
-  _id: Types.ObjectId;
-  fullName: string;
-  department: EDepartment;
-  email: string;
-  password: string;
-  phoneNumber?: string;
-  image?: string;
-  gender?: EGender;
-}
 
 const doctorSchema = new Schema<IDoctor>({
   _id: {
@@ -48,6 +23,7 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     required: true,
   },
+  clinics: [Schema.Types.ObjectId],
   department: {
     type: String,
     enum: EDepartment,
@@ -74,7 +50,9 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     enum: EGender,
   },
-  //appiontments:[appointmentSchema]
+  appointments: { type: [Schema.Types.ObjectId] },
+  role: { type: String, default: "doctor" },
+  resetLink: { type: String, default: "" },
 });
 
 export default mongoose.model<IDoctor>("doctors", doctorSchema);
