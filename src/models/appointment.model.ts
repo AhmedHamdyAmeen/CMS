@@ -25,13 +25,20 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         maxLength: 500
     },
-
+    employee: {
+        type: mongoose.Types.ObjectId,
+        ref: "employees",
+        required: true,
+    },
     //1:many child ref relationship
     clinic: {
         type: mongoose.Types.ObjectId,
         required: true,
         ref: "clinics"
     }
+},
+    {
+    timestamps: true
 });
 
 //mapping

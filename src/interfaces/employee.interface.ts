@@ -10,4 +10,5 @@ export default interface IEmployee extends Document {
     phoneNumber: String;
     profileImage?: String;
     address: ILocation;
+    role: string
 }

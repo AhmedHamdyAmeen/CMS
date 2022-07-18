@@ -5,7 +5,7 @@ import Employee from "../models/employee.model";
 
 export default class EmployeeController {
   getAllEmployees(request: Request, response: Response, next: NextFunction) {
-    Employee.find({ password: 0 })
+    Employee.find({},{ password: 0 })
       .then((data) => {
         response.status(200).json(data);
       })
@@ -51,7 +51,7 @@ export default class EmployeeController {
 
   updateEmployee(request: Request, response: Response, next: NextFunction) {
     Employee.findById(request.body.id)
-      .then((data) => {
+      .then((data: any) => {
         if (!data) next(new Error("Employee not found"));
         else {
           for (let key in request.body) {
@@ -63,7 +63,16 @@ export default class EmployeeController {
               /*****************address */
               data.address[key] = request.body[key];
             } else if (key === "password")
-              throw new Error("can not change employee password");
+              next(new Error("can not change employee password"));
+            else if (key === "clinic")
+            {
+              // if (request.role == "doctor" || request.role == "admin") data.clinic = request.body.clinic;
+              // else {
+              //   error.message = "Not Authorized";
+              //   error.status = 403;
+              //   next(error);
+           
+            }
             else data[key] = request.body[key];
           }
           return data.save();
