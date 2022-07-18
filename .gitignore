@@ -1,13 +1,8 @@
 # dependencies
-node_modules/
-diagnostic.data/
-journal/
-resources/
+/node_modules
+/data
+/resources
 .env
-*.wt
-storage.bson
-package-lock.json
-WiredTiger.turtle
-WiredTiger
-*.lock
 /dist
+package-lock.json
+!/dist/app.js
