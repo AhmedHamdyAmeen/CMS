@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Types, Schema } from "mongoose";
 
 import IDoctor, { EDepartment, EGender } from "../interfaces/doctor.interface";
+import { locationSchema } from "./location.model";
 
 let validateEmail = function (email: string) {
   let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -23,11 +24,10 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     required: true,
   },
-  clinics: [Schema.Types.ObjectId],
+  clinics: { type: [Schema.Types.ObjectId], required: true },
   department: {
     type: String,
     enum: EDepartment,
-    required: true,
   },
   email: {
     type: String,
@@ -43,9 +43,7 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     validate: [validatePhoneNumber, "Please fill a valid phone number"],
   },
-  image: {
-    type: String,
-  },
+  address: locationSchema,
   gender: {
     type: String,
     enum: EGender,

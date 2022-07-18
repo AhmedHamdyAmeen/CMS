@@ -28,13 +28,13 @@ const patientSchema = new Schema<IPatient>({
     required: true,
     enum: EGender,
   },
-  location: locationSchema,
+  address: locationSchema,
   phoneNumber: {
     type: String,
     validate: [validatePhoneNumber, "Please fill a valid phone number"],
   },
-  services: { type: [Schema.Types.ObjectId] },
-  appointments: { type: [Schema.Types.ObjectId] },
+  services: { type: [Schema.Types.ObjectId], ref: "services" },
+  appointments: { type: [Schema.Types.ObjectId], ref: "appointments" },
   notes: { type: String },
 });
 

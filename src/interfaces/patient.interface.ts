@@ -10,7 +10,7 @@ export default interface IPatient {
   fullName: string;
   age: number;
   gender: EGender;
-  location: object;
+  address: object;
   phoneNumber: string;
   notes: string;
   appointments: [Types.ObjectId];

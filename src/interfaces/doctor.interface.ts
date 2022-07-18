@@ -23,6 +23,7 @@ export default interface IDoctor {
   clinics: [Types.ObjectId];
   email: string;
   password: string;
+  address: object;
   phoneNumber?: string;
   image?: string;
   gender?: EGender;
