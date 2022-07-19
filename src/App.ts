@@ -2,8 +2,8 @@ import express, { Application,NextFunction,Request,Response  } from 'express'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 
-// import invoicesRouter from "./Routes/invoicesRoute"
-// import productRouter from "./Routes/productRoute"
+import invoicesRouter from "./Routes/invoicesRoute"
+import servicesRouter from "./Routes/servicesRoute"
 
 const server:Application = express();
 
@@ -23,9 +23,9 @@ mongoose
 
 server.use(express.json());
 
-//serve Routes
-// server.use(invoicesRouter);
-// server.use(productRouter);
+// serve Routes
+server.use(invoicesRouter);
+server.use(servicesRouter);
 
 server.use((request:Request, response:Response) => {
   response.status(404).json({

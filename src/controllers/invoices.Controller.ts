@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import invoices from "../models/invoices"
+// import doctors from "../models/doctors"
+// import patients from "../models/patients"
+import clinicServies from "../models/clinicServies"
+// import medicines from "../models/medicines"
 import mongoose from "mongoose";
-
 
 
 export default class InvoicesController {
@@ -17,8 +20,11 @@ getAllInvoices=(req:Request,res:Response,next:NextFunction)=>{
 
 
 getoneInvoices=(req:Request,res:Response,next:NextFunction)=>{
-    invoices.findOne({_id:req.params.id}).populate({path:"doctors",select:"fullName"})
-    .populate({path:"patients",select:"fullName"}).populate({path:"clinicServies",select:"name","cost"}).populate({path:"medicines",select:"name","cost"})
+    invoices.findOne({_id:req.params.id})
+    .populate({path:"doctors",select:"tradeName"})
+    .populate({path:"patients",select:"fullName"})
+    .populate({path:"clinicServies",select:"name "})
+    .populate({path:"medicines",select:"name cost"})
     .then(data=>{
         res.status(200).json(data)
     })
@@ -30,12 +36,11 @@ getoneInvoices=(req:Request,res:Response,next:NextFunction)=>{
 createInvoices=(req:Request,res:Response,next:NextFunction)=>{
     let invoicesObject= new invoices({
         _id:new mongoose.Types.ObjectId(),
-        doctors:req.doctors._id,
-        patients:req.patients._id,
-        medicines:req.medicines._id,
-        paymentMethod:req.body.paymentMethod
-        services.push(req.se services._id)
-        totalCost:        
+        doctors:req.body.id,
+        patients:req.body.id,
+        medicines:req.body.id,
+        paymentMethod:req.body.paymentMethod,
+        services:req.body.services             
 
     })
 }
