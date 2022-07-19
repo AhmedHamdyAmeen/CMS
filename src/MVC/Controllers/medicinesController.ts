@@ -1,0 +1,130 @@
+import { RequestHandler } from "express";
+import mongoose from "mongoose";
+import Medicines from "./../Models/medicinesSchema";
+
+const getMedicines: RequestHandler = (req, res, next) => {
+  Medicines.find({})
+    .then((medicines) => {
+      if (!medicines) next(new Error("Medicines is empty!"));
+
+      res.status(200).json({ medicines });
+    })
+    .catch((error) => next(error));
+};
+
+const getMedicine: RequestHandler = (req, res, next) => {
+  Medicines.findOne({ _id: req.params.id })
+    // .populate("type", "_id name")
+    .then((medicine) => {
+      if (!medicine) next(new Error("Sorry, the medicine not found!"));
+
+      res.status(200).json({ medicine });
+    })
+    .catch();
+};
+
+const addMedicines: RequestHandler = (req, res, next) => {
+  let medicinesArr = req.body.medicines;
+
+  try {
+    medicinesArr.forEach((medicine: any, idx: Number) => {
+      Medicines.findOne({ tradeName: medicine.tradeName })
+        .then((data) => {
+          if (data) throw new Error(`${medicine.tradeName}: exist already`);
+
+          const newMedicine = new Medicines({
+            _id: new mongoose.Types.ObjectId(),
+            tradeName: medicine.tradeName,
+            scientificName: medicine.scientificName,
+            type: medicine.type,
+            cost: medicine.cost,
+          });
+
+          return newMedicine
+            .save()
+            .then((data) =>
+              res.status(200).json({ msg: "Medicine Added!", data, idx })
+            )
+            .catch((error) => next(error));
+        })
+        .catch((error) => next(error));
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const addMedicine: RequestHandler = (req, res, next) => {
+  try {
+    Medicines.findOne({ tradeName: req.body.tradeName })
+      .then((medicine) => {
+        if (medicine) next(new Error("This medicine exist already"));
+
+        let newMedicine = new Medicines({
+          _id: new mongoose.Types.ObjectId(),
+          tradeName: req.body.tradeName,
+          scientificName: req.body.scientificName,
+          type: req.body.type,
+          cost: req.body.cost,
+        });
+
+        newMedicine
+          .save()
+          .then((data) =>
+            res.status(200).json({ msg: "Medicine Added!", data })
+          )
+          .catch((error) => next(error));
+      })
+      .catch((error) => next(error));
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateMedicine: RequestHandler = (req, res, next) => {
+  res.status(201).json({ data: "Updated Ya Man🥰" });
+};
+
+const updateMedicines: RequestHandler = (req, res, next) => {
+  let medicinesArr = req.body.medicines;
+  try {
+    medicinesArr.forEach((medicine: any, idx: Number) => {
+      Medicines.findOne({
+        tradeName: medicine.tradeName,
+        scientificName: medicine.scientificName,
+      })
+        .then(async (data: any) => {
+          if (!data) throw new Error(`${medicine.tradeName} not exist!`);
+
+          for (let item in medicine) {
+            data[item] = medicine[item];
+          }
+          let savedMedicine = await data.save();
+
+          if (savedMedicine)
+            res.status(200).json({ msg: "Medicines Updated!", savedMedicine });
+        })
+        .catch((error) => next(error));
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteMedicine: RequestHandler = (req, res, next) => {
+  Medicines.deleteOne({ _id: req.params.id })
+    .then((data: any) => {
+      res.status(201).json({ msg: "Medicine Deleted!", data });
+    })
+    .catch((error: any) => next(error));
+};
+
+export {
+  getMedicines,
+  getMedicine,
+  addMedicines,
+  addMedicine,
+  updateMedicine,
+  updateMedicines,
+  deleteMedicine,
+};
