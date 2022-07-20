@@ -9,7 +9,7 @@ exports.default = [
         .isString()
         .withMessage("scientificName must be a String"),
     (0, express_validator_1.body)("medicines.*.type")
-        .isMongoId()
-        .withMessage("type must be a Mongoose ObjectId"),
+        .isString()
+        .withMessage("type must be a String"),
     (0, express_validator_1.body)("medicines.*.cost").isNumeric().withMessage("cost must be a Number"),
 ];

@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import "dotenv";
 
 import medicinesRoute from "./MVC/Routes/medicinesRoute";
-import permissionsRoute from "./MVC/Routes/permissionsRoute";
 
 // * 1)  Create Server
 const server = express();
@@ -50,7 +49,6 @@ server.use(
 // communication channel to grab data
 server.use(express.json()); // parse matched json http request bodies =>> express.json() must be before routes
 server.use(medicinesRoute);
-server.use(permissionsRoute);
 
 // 3 c) Not Found MW
 server.use("/", (request, response, next) => {

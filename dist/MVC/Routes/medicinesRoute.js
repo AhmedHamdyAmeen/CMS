@@ -4,19 +4,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const medicinesController_1 = require("./../Controllers/medicinesController");
+const controllers_module_1 = require("./../Controllers/controllers.module");
 const validationMW_1 = __importDefault(require("./../Middlewares/validationMW"));
 const medicinesVA_1 = __importDefault(require("./../Models/medicinesVA"));
 const router = (0, express_1.Router)();
 router
-    .route("/medicines") //
-    .get(medicinesController_1.getMedicines)
-    .post(medicinesVA_1.default, validationMW_1.default, medicinesController_1.addMedicines)
-    .put(medicinesVA_1.default, validationMW_1.default, medicinesController_1.updateMedicines);
+    .route("/medicines")
+    .get(controllers_module_1.medicineController.getMedicines)
+    .post(medicinesVA_1.default, validationMW_1.default, controllers_module_1.medicineController.addMedicines)
+    .put(medicinesVA_1.default, validationMW_1.default, controllers_module_1.medicineController.updateMedicines);
 router
     .route("/medicine/:id?")
-    .get(medicinesController_1.getMedicine)
-    .post(medicinesVA_1.default, validationMW_1.default, medicinesController_1.addMedicine)
-    .put(medicinesVA_1.default, validationMW_1.default, medicinesController_1.updateMedicine)
-    .delete(medicinesController_1.deleteMedicine);
+    .get(controllers_module_1.medicineController.getMedicine)
+    // .post(medicinesVA, validationMW, addMedicine)
+    .put(medicinesVA_1.default, validationMW_1.default, controllers_module_1.medicineController.updateMedicine)
+    .delete(controllers_module_1.medicineController.deleteMedicine);
+router.post("/medicine", medicinesVA_1.default, validationMW_1.default, controllers_module_1.medicineController.addMedicine);
 exports.default = router;

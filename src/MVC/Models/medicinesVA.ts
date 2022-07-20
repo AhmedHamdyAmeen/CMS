@@ -10,8 +10,8 @@ export default [
     .withMessage("scientificName must be a String"),
 
   body("medicines.*.type")
-    .isMongoId()
-    .withMessage("type must be a Mongoose ObjectId"),
+  .isString()
+  .withMessage("type must be a String"),
 
   body("medicines.*.cost").isNumeric().withMessage("cost must be a Number"),
 ];

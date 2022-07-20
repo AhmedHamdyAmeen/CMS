@@ -9,7 +9,6 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 require("dotenv");
 const medicinesRoute_1 = __importDefault(require("./MVC/Routes/medicinesRoute"));
-const permissionsRoute_1 = __importDefault(require("./MVC/Routes/permissionsRoute"));
 // * 1)  Create Server
 const server = (0, express_1.default)();
 // todo: Connect to the DB
@@ -46,7 +45,6 @@ server.use((0, morgan_1.default)(function (tokens, req, res) {
 // communication channel to grab data
 server.use(express_1.default.json()); // parse matched json http request bodies =>> express.json() must be before routes
 server.use(medicinesRoute_1.default);
-server.use(permissionsRoute_1.default);
 // 3 c) Not Found MW
 server.use("/", (request, response, next) => {
     response.status(404).json({ data: "Not Found" });
