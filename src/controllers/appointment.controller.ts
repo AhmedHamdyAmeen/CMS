@@ -1,3 +1,4 @@
+import { validateDate } from "./../helpers/functions";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 
@@ -7,7 +8,8 @@ export default class AppointmentController {
   getAllAppointments(request: Request, response: Response, next: NextFunction) {
     Appointment.find({}, { date: 1, doctor: 1 })
       .then((data) => {
-        response.status(200).json(data);
+        if (!data) next(new Error("appointments not found"));
+        else response.status(200).json(data);
       })
       .catch((error) => {
         next(error);
@@ -15,51 +17,86 @@ export default class AppointmentController {
   }
 
   getAppointmentById(request: Request, response: Response, next: NextFunction) {
-    Appointment.find({ _id: request.params.id })
+    Appointment.findOne({ _id: request.params.id }, { employee: 0 })
+      .populate({ path: "doctor", select: "fullName" })
       .then((data) => {
-        if (!data) next(new Error("appointment not found"));
-        response.status(200).json(data);
+        if (!data) next(new Error("appointments not found"));
+        else response.status(200).json(data);
       })
       .catch((error) => {
         next(error);
       });
   }
 
-  getAppointmentByDoctor(request: Request, response: Response, next: NextFunction) {
-    Appointment.find({ _id: request.params.id })
+  /** for admin validation */
+  getAppointmentByEmployee(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    Appointment.find({ employee: request.params.id })
+      .populate({ path: "doctor", select: "fullName" })
+      .populate({ path: "employee", select: "fullName -_id" })
       .then((data) => {
         if (!data) next(new Error("appointment not found"));
-        response.status(200).json(data);
+        else response.status(200).json(data);
       })
       .catch((error) => {
         next(error);
       });
   }
 
-  createAppointment(request: Request, response: Response, next: NextFunction) {
+  /** for daily schedule */
+  getAppointmentByDoctor(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    Appointment.find(
+      { doctor: request.params.id },
+      { employee: 0, createdAt: 0, updatedAt: 0 }
+    )
+      .populate({ path: "doctor", select: "fullName" })
+      .then((data) => {
+        if (!data) next(new Error("appointment not found"));
+        else response.status(200).json(data);
+      })
+      .catch((error) => {
+        next(error);
+      });
+  }
+
+  createAppointment(request: any, response: Response, next: NextFunction) {
     Appointment.find({
       date: request.body.date,
       doctor: request.body.doctor,
-    }).then((data) => {
-      if (data.length) {
-        next(new Error("appointment already reserved"));
-      } else {
-        let object = new Appointment({
-          _id: new mongoose.Types.ObjectId(),
-          date: request.body.date,
-          doctor: request.body.doctor,
-          patient: request.body.patient,
-          description: request.body.description,
-          clinic: request.body.clinic,
-        });
-        object
-          .save()
-          .then((data) => {
-            response.status(201).json({ data: "added" });
-          })
-          .catch((error) => next(error));
-      }
-    });
+    })
+      .then((data) => {
+        if (data.length) {
+          next(new Error("appointment already reserved"));
+        } else {
+          if (!validateDate(request.body.date))
+            //false
+            next(
+              new Error(
+                "An appointment must not be in the past and not more than 60 days from now."
+              )
+            );
+          let appointment = new Appointment({
+            _id: new mongoose.Types.ObjectId(),
+            date: request.body.date,
+            doctor: request.body.doctor,
+            description: request.body.description,
+            employee: request.body.employee, //testing
+            // employee: request.id,
+          });
+          return appointment.save();
+        }
+      })
+      .then((data) => {
+        response.status(201).json({ data: "added" });
+      })
+      .catch((error) => next(error));
   }
 
   updateAppointment(request: Request, response: Response, next: NextFunction) {
@@ -67,8 +104,14 @@ export default class AppointmentController {
       .then((data: any) => {
         if (!data) next(new Error("appointment not found"));
         else {
+          if (request.body.date && !validateDate(request.body.date))
+            next(
+              new Error(
+                "An appointment must not be in the past and not more than 60 days from now."
+              )
+            );
           for (let key in request.body) {
-            data[key] = request.body[key];
+            if (key != "employee") data[key] = request.body[key];
           }
           return data.save();
         }

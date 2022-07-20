@@ -15,12 +15,6 @@ export const postAppointmentValidator = [
     .withMessage("Appointment doctor required")
     .isMongoId()
     .withMessage("invalid Appointment doctor"),
-  //patient
-  check("patient")
-    .notEmpty()
-    .withMessage("Appointment patient required")
-    .isMongoId()
-    .withMessage("invalid Appointment patient"),
   //description
   check("description")
     .optional()
@@ -28,10 +22,6 @@ export const postAppointmentValidator = [
     .withMessage("Appointment description reqiured")
     .isLength({ max: 500 })
     .withMessage("Appointment description can not exceed 500 characters"),
-  //clinic
-  check("clinic")
-    .isMongoId()
-    .withMessage("Appointment clinic must be a valid ID"),
 ];
 
 export const putAppointmentValidator = [
@@ -51,13 +41,6 @@ export const putAppointmentValidator = [
     .withMessage("Appointment doctor required")
     .isMongoId()
     .withMessage("invalid Appointment doctor"),
-  //patient
-  check("patient")
-    .optional()
-    .notEmpty()
-    .withMessage("Appointment patient required")
-    .isMongoId()
-    .withMessage("invalid Appointment patient"),
   //description
   check("description")
     .optional()
@@ -65,9 +48,8 @@ export const putAppointmentValidator = [
     .withMessage("Appointment description reqiured")
     .isLength({ max: 500 })
     .withMessage("Appointment description can not exceed 500 characters"),
-  //clinic
-  check("clinic")
-    .optional()
-    .isMongoId()
-    .withMessage("Appointment clinic must be a valid ID"),
+];
+
+export const idAppointmentValidator = [
+  check("id").isMongoId().withMessage("invalid appointment id"),
 ];

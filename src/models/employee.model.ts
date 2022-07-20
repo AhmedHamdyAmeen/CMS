@@ -3,64 +3,54 @@ import mongoose, { Schema } from "mongoose";
 import IEmployee from "../interfaces/employee.interface"; 
 import { locationSchema } from "./location.model";
 
-import { emailRegex, passwordRegex } from "../utilities/regex";
+import {
+  validateEmail,
+  validatePassword,
+  validatePhoneNumber,
+  validateFullName,
+} from "./../helpers/functions";
+import { EDepartment } from "../interfaces/doctor.interface";
 
-const employeeSchema: Schema = new mongoose.Schema(
-  {
-    _id: {
-      type: mongoose.Types.ObjectId,
-    },
-    fullName: {
-      type: String,
-      required: true,
-      minLength: 5,
-      maxLength: 15,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      validate: {
-        validator: function (email: string) {
-          return emailRegex.test(email);
-        },
-        message: (props: { value: any }) =>
-          `${props.value} is not a valid email!`,
-      },
-    },
-    password: {
-      type: String,
-      required: true,
-      validate: {
-        validator: function (password: string) {
-          return passwordRegex.test(password);
-        },
-        message: (props: { value: any }) =>
-          `${props.value} is too weak for a password!`,
-      },
-    },
-    phoneNumber: {
-      type: String,
-      // validate: {
-      //     validator: function(phoneNumber: string) {
-      //       return /\d{3}-\d{3}-\d{4}/.test(phoneNumber); //(127)(83)(3881)
-      //     },
-      //     message: (props: { value: any; }) => `${props.value} is not a valid phone number!`
-      // },
-    },
-    profileImage: {
-      type: String,
-    },
-    role: {
-      type: String,
-      default: "employee"
-    },
-    //1:1 embedded relationships
-    address: {
-      type: locationSchema,
-    }
-  }
-);
+const employeeSchema: Schema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Types.ObjectId,
+  },
+  fullName: {
+    //unique
+    type: String,
+    required: true,
+    validate: [validateFullName, "Please fill a valid fullName"],
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: [validateEmail, "Please fill a valid email address"],
+  },
+  password: {
+    type: String,
+    required: true,
+    validate: [validatePassword, "Please fill a strong password"],
+  },
+  phoneNumber: {
+    type: String,
+    // validate: [validatePhoneNumber, "Please fill a valid phone number"],
+  },
+  role: {
+    type: String,
+    default: "employee",
+  },
+  //1:1 embedded relationships
+  address: {
+    type: locationSchema,
+  },
+  department: {
+    type: String,
+    enum: EDepartment,
+    required: true,
+  },
+  resetLink: { type: String, default: "" },
+});
 
 //mapping
 export default mongoose.model <IEmployee> ("employees",employeeSchema);

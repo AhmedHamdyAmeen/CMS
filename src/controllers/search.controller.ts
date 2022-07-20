@@ -8,14 +8,19 @@ interface IQuery {
 }
 
 export default class FilterAppointmentController {
+  /** Appointment filters:
+   * by date
+   * by doctor ? get by doctor
+   * by employee ? get by employee
+   */
   getAppointment = (
     request: Request,
     response: Response,
     next: NextFunction
   ) => {
-    const [filterQuery, sortQuery] = this.handleFilterQuery(request.query);
-    Appointment.find(filterQuery)
-      .sort(sortQuery)
+    const queries = this.handleFilterQuery(request.query);
+    Appointment.find(queries![0])
+      .sort(queries![1])
       .then((data) => {
         response.status(200).json(data);
       })
@@ -24,16 +29,21 @@ export default class FilterAppointmentController {
       });
   };
 
+  /** Employee filters:
+   * by department
+   */
   getEmployee = (request: Request, response: Response, next: NextFunction) => {
-    const [filterQuery, sortQuery] = this.handleFilterQuery(request.query);
-    Employee.find(filterQuery)
-      .sort(sortQuery)
-      .then((data) => {
-        response.status(200).json(data);
-      })
-      .catch((error) => {
-        next(error);
-      });
+    const queries = this.handleFilterQuery(request.query);
+    if (queries!.length) {
+     Employee.find(queries![0], {password: 0})
+       .sort(queries![1])
+       .then((data) => {
+         response.status(200).json(data);
+       })
+       .catch((error) => {
+         next(error);
+       }); 
+    }
   };
 
   handleFilterQuery = (queryObject: IQuery) => {

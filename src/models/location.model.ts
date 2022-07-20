@@ -9,10 +9,7 @@ export const locationSchema: Schema = new mongoose.Schema<ILocation>(
     },
     city: {
       type: String,
-    },
-    state: {
-      type: String,
-    },
+    }
   },
   { _id: false }
 );

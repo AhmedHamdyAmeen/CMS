@@ -6,7 +6,6 @@ export default function resultValidator(
   response: Response,
   next: NextFunction
 ) {
-  console.log("resultValidationMW");
   let result: any = validationResult(request);
   if (!result.isEmpty()) {
     let message = result.errors.reduce(
@@ -15,7 +14,7 @@ export default function resultValidator(
     );
     let error: any = new Error(message);
     error.status = 422;
-    throw error;
+    next(error);
   } else {
     next();
   }

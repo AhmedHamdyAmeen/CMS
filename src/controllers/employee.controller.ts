@@ -28,51 +28,41 @@ export default class EmployeeController {
     let addressObject = {
       address: request.body.address,
       city: request.body.city,
-      state: request.body.state,
     };
-    let object = new Employee({
+    let employee = new Employee({
       _id: new mongoose.Types.ObjectId(),
       fullName: request.body.fullName,
       email: request.body.email,
       password: request.body.password,
-      clinic: request.body.clinic,
+      department: request.body.department,
       //not required
       phoneNumber: request.body.phone,
       address: addressObject,
-      profileImage: request.body.profileImage,
     });
-    object
-      .save()
+    employee.save()
       .then((data) => {
         response.status(201).json({ data: "added" });
       })
       .catch((error) => next(error));
   }
 
-  updateEmployee(request: Request, response: Response, next: NextFunction) {
+  updateEmployee(request: any, response: Response, next: NextFunction) {
     Employee.findById(request.body.id)
       .then((data: any) => {
         if (!data) next(new Error("Employee not found"));
         else {
+          if (request.role === "employee" && request.id !== request.body.id) {
+            next(new Error("not authorized"));
+          }/*********************************************???? */
           for (let key in request.body) {
             if (
               key === "city" ||
-              key === "state" ||
               key === "address"
             ) {
               /*****************address */
               data.address[key] = request.body[key];
             } else if (key === "password")
               next(new Error("can not change employee password"));
-            else if (key === "clinic")
-            {
-              // if (request.role == "doctor" || request.role == "admin") data.clinic = request.body.clinic;
-              // else {
-              //   error.message = "Not Authorized";
-              //   error.status = 403;
-              //   next(error);
-           
-            }
             else data[key] = request.body[key];
           }
           return data.save();

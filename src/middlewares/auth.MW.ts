@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-export const authMW: RequestHandler = (request: any, response, next) => {
+const auth = (
+  request: any,
+  response: Response,
+  next: NextFunction
+) => {
   let decodedToken: any = null;
   try {
     let token = request.get("Authorization").split(" ")[1];
-    decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+    decodedToken = jwt.verify(token, "mysecret");
     request.role = decodedToken.role;
     request.id = decodedToken.id;
     next();
@@ -15,3 +19,5 @@ export const authMW: RequestHandler = (request: any, response, next) => {
     next(error);
   }
 };
+
+export default auth;
