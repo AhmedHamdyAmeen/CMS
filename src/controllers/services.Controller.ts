@@ -6,7 +6,7 @@ import services from '../models/clinicServies'
 
 export default class ServiceController {
     getAllService(request: Request, response: Response, next: NextFunction){
-            services.find({}).findOne({_id:request.params.id}).populate({path:"patients",select:"fullName"})
+            services.find({})
             .then(data=>{
                 response.status(200).json(data)
             })
@@ -14,7 +14,7 @@ export default class ServiceController {
     }
 
     getServiceById(request: Request, response: Response, next: NextFunction){
-            services.findOne({_id:request.params.id}).populate({path:"patients",select:"fullName"})
+            services.findOne({_id:request.params.id})
             .then(data=>{
                 response.status(200).json(data)
             })
@@ -35,7 +35,7 @@ export default class ServiceController {
    }
 
    updateService(request: Request, response: Response, next: NextFunction) {
-    services.findById(request.body.id)
+    services.findById(request.params.id)
       .then((data: any) => {
         if (!data) next(new Error("services not found"));
         else {

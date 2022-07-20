@@ -8,7 +8,7 @@ import servicesRouter from "./Routes/servicesRoute"
 const server:Application = express();
 
 mongoose
-  .connect("mongodb://localhost:27017/CMSDB")
+  .connect("mongodb://localhost:27017/CMS")
   .then(() => {
     console.log("database connected");
     server.listen(process.env.PORT || 8080, () => {

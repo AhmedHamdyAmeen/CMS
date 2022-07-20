@@ -1,51 +1,56 @@
 import { Request, Response, NextFunction } from "express";
-import invoices from "../models/invoices"
-// import doctors from "../models/doctors"
-// import patients from "../models/patients"
-import clinicServies from "../models/clinicServies"
-// import medicines from "../models/medicines"
+import invoices from "../models/invoices";
 import mongoose from "mongoose";
 
-
 export default class InvoicesController {
-getAllInvoices=(req:Request,res:Response,next:NextFunction)=>{
-    invoices.find({})
-    .then(data=>{
-        res.status(200).json(data)
-    })
-    .catch(error => {
-        next(error)})
-}
+  getAllInvoices = (req: Request, res: Response, next: NextFunction) => {
+    invoices
+      .find({})
+      .then((data) => {
+        res.status(200).json(data);
+      })
+      .catch((error) => {
+        next(error);
+      });
+  };
 
+  getoneInvoices = (req: Request, res: Response, next: NextFunction) => {
+    invoices
+      .findOne({ _id: req.params.id })
+      // .populate({ path: "doctors", select: "fullName" })
+      // .populate({path:"patients",select:"fullName"})
+      // .populate({path:"medicines",select:"tradeName cost"})
+      .populate({ path: "services", select: "name" })
 
+      .then((data) => {
+        res.status(200).json(data);
+      })
+      .catch((error) => {
+        next(error);
+      });
+  };
 
-getoneInvoices=(req:Request,res:Response,next:NextFunction)=>{
-    invoices.findOne({_id:req.params.id})
-    .populate({path:"doctors",select:"tradeName"})
-    .populate({path:"patients",select:"fullName"})
-    .populate({path:"clinicServies",select:"name "})
-    .populate({path:"medicines",select:"name cost"})
-    .then(data=>{
-        res.status(200).json(data)
-    })
-    .catch(error => {
-        next(error)
-    })
-}
-
-createInvoices=(req:Request,res:Response,next:NextFunction)=>{
-    let invoicesObject= new invoices({
-        _id:new mongoose.Types.ObjectId(),
-        doctors:req.body.id,
-        patients:req.body.id,
-        medicines:req.body.id,
-        paymentMethod:req.body.paymentMethod,
-        services:req.body.services             
-
-    })
-}
-updateInvoices(request: Request, response: Response, next: NextFunction) {
-    invoices.findById(request.body.id)
+  createInvoices = (req: Request, res: Response, next: NextFunction) => {
+    let invoicesObject = new invoices({
+      _id: new mongoose.Types.ObjectId(),
+      // doctors:req.body.doctors,
+      // patients:req.body.patients,
+      // medicines:req.body.medicines,
+      paymentMethod: req.body.paymentMethod,
+      services: req.body.services,
+      totalCost: req.body.totalCost,
+      isPaid: req.body.isPaid,
+    });
+    invoicesObject
+      .save()
+      .then((data) => {
+        res.status(201).json({ data: "added" });
+      })
+      .catch((error) => next(error));
+  };
+  updateInvoices(request: Request, response: Response, next: NextFunction) {
+    invoices
+      .findById(request.params.id)
       .then((data: any) => {
         if (!data) next(new Error("invoices not found"));
         else {
@@ -62,7 +67,8 @@ updateInvoices(request: Request, response: Response, next: NextFunction) {
   }
 
   deleteInvoice(request: Request, response: Response, next: NextFunction) {
-    invoices.deleteOne({ _id: request.params.id })
+    invoices
+      .deleteOne({ _id: request.params.id })
       .then((data) => {
         if (!data) next(new Error("invoices not found"));
         response.status(200).json({ data: "delete " + request.params.id });

@@ -9,12 +9,12 @@ let invoicesSchema = new Schema({
     },
     doctors: {
         type: mongoose.Types.ObjectId,
-        required: true,
+        // required: true,
         ref: "doctors"
     },
     patients: {
         type: mongoose.Types.ObjectId,
-        required: true,
+        // required: true,
         ref: "patients"
     },
 
