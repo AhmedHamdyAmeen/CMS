@@ -1,5 +1,7 @@
+import { removeServices } from "./../middlewares/patient.MW";
 import { Request, Response, NextFunction } from "express";
 import invoices from "../models/invoices.model";
+
 import mongoose from "mongoose";
 
 export default class InvoicesController {
@@ -19,7 +21,7 @@ export default class InvoicesController {
     invoices
       .findOne({ _id: req.params.id }) //by patient
       .populate({ path: "doctors", select: "fullName" })
-      .populate({path:"patients",select:"fullName"})
+      .populate({ path: "patients", select: "fullName" })
       .populate({ path: "services", select: "name" })
 
       .then((data) => {
@@ -30,16 +32,15 @@ export default class InvoicesController {
       });
   };
 
-  createInvoices = (req: Request, res: Response, next: NextFunction) => {
+  createInvoices = (req: any, res: Response, next: NextFunction) => {
     let invoicesObject = new invoices({
       _id: new mongoose.Types.ObjectId(),
-      doctors:req.body.doctors,
-      patients:req.body.patients,
+      patients: req.body.patients,
       paymentMethod: req.body.paymentMethod,
-      services: req.body.services,
-      totalCost: req.body.totalCost,
-      
+      totalCost: req.remainingAmount,
     });
+    invoicesObject.services.push(req.body.service);
+
     invoicesObject
       .save()
       .then((data) => {
@@ -56,6 +57,22 @@ export default class InvoicesController {
           for (let key in request.body) {
             data[key] = request.body[key];
           }
+          return data.save();
+        }
+      })
+      .then((data) => {
+        response.status(201).json({ data: "updated" });
+      })
+      .catch((error) => next(error));
+  }
+
+  updateIsReady(request: Request, response: Response, next: NextFunction) {
+    invoices
+      .findOne({ _id: request.body.invoice, patients: request.body.patient })
+      .then((data: any) => {
+        if (!data) next(new Error("invoice not found"));
+        else {
+          data.isReady = true;
           return data.save();
         }
       })

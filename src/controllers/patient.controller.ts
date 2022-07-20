@@ -1,8 +1,11 @@
 import { RequestHandler } from "express";
 import mongoose from "mongoose";
-import "../models/patient.model";
 
+import "../models/patient.model";
 let Patient = mongoose.model("patients");
+
+import "../models/services.model";
+let Service = mongoose.model("services");
 
 export default class PatientController {
   createPatient: RequestHandler = (request, response, next) => {
@@ -18,7 +21,7 @@ export default class PatientController {
       },
       phoneNumber: request.body.phoneNumber,
       appointments: request.body.appointments,
-      services: request.body.services, //🔴Mohab
+      services: request.body.services,
       notes: request.body.notes,
     });
     object
@@ -47,16 +50,40 @@ export default class PatientController {
       .catch((error) => next(error));
   };
 
-  addServicePatient: RequestHandler = (request, response, next) => {
+  addServicePatient: RequestHandler = (request: any, response, next) => {
     console.log("addServicePatient controller");
     Patient.findOne({ _id: request.params.id })
+      .populate("services")
       .then((data: any) => {
         if (!data) next(new Error("patient not found"));
-        for (let service in request.body.services) {
-          data.services.push(request.body.services[service]);
-        }
+        data.services.push(request.body.service);
+        Service.findOne({
+          _id: request.body.service,
+        }).then((matchedService: any) => {
+          data.remainingAmount += matchedService.cost;
+          request.remainingAmount = 0;
+          request.remainingAmount += matchedService.cost;
+          return data.save().then((data: any) => {
+            next();
+          });
+        });
+      })
+      .catch((error) => next(error));
+  };
+
+  partPayment: RequestHandler = (request, response, next) => {
+    console.log("removeServicePatient controller");
+    Patient.findOne({ _id: request.body.patient })
+      .then((data: any) => {
+        if (!data) next(new Error("patient not found"));
+        data.remainingAmount -= request.body.amount;
         return data.save().then((data: any) => {
-          response.status(200).json({ msg: "service added", data });
+          if (data.remainingAmount == 0) {
+            next();
+          }
+          response.status(200).json({
+            msg: `patient paid ${request.body.amount}. Remaining amount is ${data.remainingAmount}`,
+          });
         });
       })
       .catch((error) => next(error));
@@ -77,12 +104,12 @@ export default class PatientController {
       .catch((error) => next(error));
   };
 
-  addAppointmentPatient: RequestHandler = (request, response, next) => {
+  addAppointmentPatient: RequestHandler = (request: any, response, next) => {
     console.log("addAppointmentPatient controller");
-    Patient.findOne({ _id: request.params.id })
+    Patient.findOne({ _id: request.body.patient })
       .then((data: any) => {
         if (!data) next(new Error("patient not found"));
-        data.appointments.push(request.body.appointment);
+        data.appointments.push(request.appointment);
         return data.save().then((data: any) => {
           response.status(200).json({ msg: "appointment added", data });
         });

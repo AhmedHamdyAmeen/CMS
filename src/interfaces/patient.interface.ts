@@ -15,4 +15,5 @@ export default interface IPatient {
   notes: string;
   appointments: [Types.ObjectId];
   services: [Types.ObjectId];
+  remainingAmount: number;
 }

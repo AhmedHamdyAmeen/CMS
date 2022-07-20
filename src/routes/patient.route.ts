@@ -6,8 +6,12 @@ import {
   idValidator,
   addServices,
   removeServices,
+  partPayment,
 } from "../middlewares/patient.MW";
-import { patientController } from "../controllers/controllers.module";
+import {
+  patientController,
+  invoicesController,
+} from "../controllers/controllers.module";
 import resultValidator from "../middlewares/validation.MW";
 import auth from "../middlewares/auth.MW";
 import {
@@ -15,6 +19,7 @@ import {
   adminAuth,
   adminAndEmployeeAuth,
 } from "../middlewares/userAccess.MW";
+import { postValidator } from "../middlewares/invoices.MW";
 
 const router = Router();
 
@@ -29,6 +34,16 @@ router
     patientController.createPatient
   )
   .get(adminAndEmployeeAuth, patientController.getAllPatients);
+
+router
+  .route("/partPayment")
+  .put(
+    adminAndEmployeeAuth,
+    partPayment,
+    resultValidator,
+    patientController.partPayment,
+    invoicesController.updateIsReady
+  );
 
 router
   .route("/:id")
@@ -47,13 +62,14 @@ router
   .put(
     adminAndEmployeeAuth,
     idValidator,
-    addServices,
+    postValidator,
     resultValidator,
-    patientController.addServicePatient
+    patientController.addServicePatient,
+    invoicesController.createInvoices
   );
 
 router
-  .route("/:id/addService")
+  .route("/:id/removeService")
   .put(
     adminAndEmployeeAuth,
     idValidator,

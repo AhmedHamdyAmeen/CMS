@@ -32,6 +32,10 @@ const patientSchema = new Schema<IPatient>({
   services: { type: [Schema.Types.ObjectId], ref: "services" },
   appointments: { type: [Schema.Types.ObjectId], ref: "appointments" },
   notes: { type: String },
+  remainingAmount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model<IPatient>("patients", patientSchema);

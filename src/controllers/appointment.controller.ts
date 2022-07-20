@@ -52,8 +52,15 @@ export default class AppointmentController {
     response: Response,
     next: NextFunction
   ) {
+    const today: Date = new Date(Date.now());
+    const date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
     Appointment.find(
-      { doctor: request.params.id },
+      { doctor: request.params.id, date: date },
       { employee: 0, createdAt: 0, updatedAt: 0 }
     )
       .populate({ path: "doctor", select: "fullName" })
@@ -87,14 +94,14 @@ export default class AppointmentController {
             date: request.body.date,
             doctor: request.body.doctor,
             description: request.body.description,
-            employee: request.body.employee, //testing
-            // employee: request.id,
+            employee: request.id,
           });
+          request.appointment = appointment._id;
           return appointment.save();
         }
       })
       .then((data) => {
-        response.status(201).json({ data: "added" });
+        next();
       })
       .catch((error) => next(error));
   }

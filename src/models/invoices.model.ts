@@ -1,47 +1,43 @@
 import mongoose from "mongoose";
 
-import { Schema,Types } from "mongoose"
+import { Schema, Types } from "mongoose";
 
-
-let invoicesSchema = new Schema({
+let invoicesSchema = new Schema(
+  {
     _id: {
-        type: mongoose.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
     },
-    doctors: {
-        type: mongoose.Types.ObjectId,
-        // required: true,
-        ref: "doctors"
-    },
+
     patients: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "patients"
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "patients",
     },
 
     paymentMethod: {
-        type:String,
-        enum: ["cash", "credit card", "insurance card"],
-        required:true
+      type: String,
+      enum: ["cash", "credit card", "insurance card"],
+      required: true,
     },
 
-    services: [{
+    services: [
+      {
         type: mongoose.Types.ObjectId,
-        ref: "services"
-    }],
+        ref: "services",
+      },
+    ],
 
     totalCost: {
-        type: Number, 
-        required:true       
+      type: Number,
+      required: true,
     },
-    
-    isReady:{
-        type:Boolean,
-        default:false
-    }
 
-   
+    isReady: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false }
+);
 
-},{_id:false})
-
-
-export default mongoose.model("invoices",invoicesSchema)
+export default mongoose.model("invoices", invoicesSchema);

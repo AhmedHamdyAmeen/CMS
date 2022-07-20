@@ -84,11 +84,29 @@ export let idValidator = [
 ];
 
 export let addServices = [
-  check("services")
+  check("service")
     .notEmpty()
     .withMessage("patient services is required")
-    .isArray({ min: 1 })
-    .withMessage("patient services should be array & min 1 service"),
+    .isMongoId()
+    .withMessage("invalid service value"),
+];
+
+export let partPayment = [
+  check("patient")
+    .notEmpty()
+    .withMessage("patient is required")
+    .isMongoId()
+    .withMessage("patient should be mongoId"),
+  check("invoice")
+    .notEmpty()
+    .withMessage("invoice is required")
+    .isMongoId()
+    .withMessage("invoice should be mongoId"),
+  check("amount")
+    .notEmpty()
+    .withMessage("patient amount is required")
+    .isNumeric()
+    .withMessage("patient amount should be numeric"),
 ];
 
 export let removeServices = [
