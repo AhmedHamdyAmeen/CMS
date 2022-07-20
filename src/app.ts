@@ -11,11 +11,11 @@ import employeeRoute from "./routes/employee.route";
 import appointmentRoute from "./routes/appointment.route";
 import searchRoute from "./routes/search.route";
 import paymentRoute from "./routes/payment.route";
+import authRoute from "./routes/auth.route";
 
 import doctorRoutes from "./routes/doctor.route";
 import prescriptionRoutes from "./routes/prescription.route";
 import patientRoutes from "./routes/patient.route";
-
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
@@ -49,6 +49,7 @@ app.use(cors());
 app.use(express.json()); //body parsing
 
 app.use("/payment", paymentRoute);
+app.use(authRoute);
 
 app.use(searchRoute);
 app.use("/employee", employeeRoute);

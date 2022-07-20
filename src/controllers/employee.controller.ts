@@ -5,7 +5,7 @@ import Employee from "../models/employee.model";
 
 export default class EmployeeController {
   getAllEmployees(request: Request, response: Response, next: NextFunction) {
-    Employee.find({},{ password: 0 })
+    Employee.find({}, { password: 0, resetLink: 0 })
       .then((data) => {
         response.status(200).json(data);
       })
@@ -15,7 +15,7 @@ export default class EmployeeController {
   }
 
   getEmployeeById(request: Request, response: Response, next: NextFunction) {
-    Employee.find({ _id: request.params.id }, { password: 0 })
+    Employee.find({ _id: request.params.id }, { password: 0, resetLink: 0 })
       .then((data) => {
         response.status(200).json(data);
       })
@@ -39,7 +39,8 @@ export default class EmployeeController {
       phoneNumber: request.body.phone,
       address: addressObject,
     });
-    employee.save()
+    employee
+      .save()
       .then((data) => {
         response.status(201).json({ data: "added" });
       })
@@ -53,16 +54,18 @@ export default class EmployeeController {
         else {
           if (request.role === "employee" && request.id !== request.body.id) {
             next(new Error("not authorized"));
-          }/*********************************************???? */
+          } /*********************************************???? */
           for (let key in request.body) {
-            if (
-              key === "city" ||
-              key === "address"
-            ) {
+            if (key === "city" || key === "address") {
               /*****************address */
               data.address[key] = request.body[key];
             } else if (key === "password")
               next(new Error("can not change employee password"));
+            else if (key === "department") {
+              if(request.role === "admin")
+                data[key] = request.body[key]
+              else next(new Error("not authorized"));
+            }
             else data[key] = request.body[key];
           }
           return data.save();
@@ -82,4 +85,3 @@ export default class EmployeeController {
       .catch((error) => next(error));
   }
 }
-

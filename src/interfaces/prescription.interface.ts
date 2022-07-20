@@ -1,9 +1,9 @@
-import { Types, Schema } from "mongoose";
+import { Types } from "mongoose";
 
 export default interface IPrescription {
   _id: Types.ObjectId;
   doctor: Types.ObjectId;
   patient: Types.ObjectId;
-  medicines: Array<Object>;
-  date: Date;
+  medicines: Array<Types.ObjectId>;
+  notes: string;
 }

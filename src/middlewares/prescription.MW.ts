@@ -21,11 +21,10 @@ export let post = [
     .withMessage("prescription medicines is required")
     .isArray({ min: 1 })
     .withMessage("prescription medicines should be array"),
-  check("date")
-    .notEmpty()
-    .withMessage("prescription date is required")
-    .isDate()
-    .withMessage("prescription date should be valide date"),
+  check("notes")
+    .optional()
+    .isString()
+    .withMessage("prescription notes should be array"),
 ];
 
 export let put = [
@@ -50,13 +49,13 @@ export let put = [
     .isArray()
     .optional()
     .withMessage("prescription medicines should be array"),
-  check("date")
-    .isDate()
+  check("notes")
     .optional()
-    .withMessage("prescription date should be valide date"),
+    .isString()
+    .withMessage("prescription notes should be array"),
 ];
 
-export let getDelete = [
+export let idValidator = [
   check("id")
     .notEmpty()
     .withMessage("prescription id is required")

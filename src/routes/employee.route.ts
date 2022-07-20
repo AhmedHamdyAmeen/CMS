@@ -13,26 +13,26 @@ import {
   allAuth,
   adminAndDoctorAuth,
   adminAuth,
-} from "./../middlewares/authorization.MW";
+} from "../middlewares/userAccess.MW";
 
 const employeeRoute = express.Router();
 
-// employeeRoute.use(auth);
+employeeRoute.use(auth);
 
 employeeRoute
   .route("/")
   .get(
-    // allAuth,
+    allAuth,
     employeeController.getAllEmployees)
   .post(
-    // adminAndDoctorAuth,
+    adminAndDoctorAuth,
     postEmployeeValidator,
     resultValidator,
     hashPassword,
     employeeController.createEmployee
   )
   .put(
-    // adminAndDoctorAuth,
+    allAuth,
     putEmployeeValidator,
     resultValidator,
     employeeController.updateEmployee
@@ -42,10 +42,10 @@ employeeRoute
   .route("/:id")
   .all(idEmployeeValidator, resultValidator)
   .get(
-    // allAuth,
+    allAuth,
     employeeController.getEmployeeById)
   .delete(
-    // adminAuth,
+    adminAuth,
     employeeController.deleteEmployee);
 
 export default employeeRoute;

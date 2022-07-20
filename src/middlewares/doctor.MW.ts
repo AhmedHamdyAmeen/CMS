@@ -116,7 +116,7 @@ export let put = [
     .withMessage(`doctor gender should be either "Male" or "Female"`),
 ];
 
-export let getDelete = [
+export let idValidator = [
   (request: Request, response: Response, next: NextFunction) => {
     console.log("validationMW");
     next();

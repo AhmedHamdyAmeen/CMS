@@ -8,7 +8,7 @@ import {
   adminAuth,
   allAuth,
   adminAndDoctorAuth,
-} from "./../middlewares/authorization.MW";
+} from "../middlewares/userAccess.MW";
 import {
   postAppointmentValidator,
   putAppointmentValidator,
@@ -17,34 +17,34 @@ import {
 
 const appointmentRoute = Router();
 
-// appointmentRoute.use(auth);
+appointmentRoute.use(auth);
 appointmentRoute
   .route("/")
   .get(
-    // adminAndEmployeeAuth,
+    adminAndEmployeeAuth,
     appointmentController.getAllAppointments)
   .post(
-    // adminAndEmployeeAuth,
+    adminAndEmployeeAuth,
     postAppointmentValidator,
     resultValidator,
     appointmentController.createAppointment
   )
   .put(
-    // adminAndEmployeeAuth,
+    adminAndEmployeeAuth,
     putAppointmentValidator,
     resultValidator,
     appointmentController.updateAppointment
   );
 
 appointmentRoute.route("/doctor/:id").get(
-  // adminAndEmployeeAuth,
+  adminAndEmployeeAuth,
   idAppointmentValidator,
   resultValidator,
   appointmentController.getAppointmentByDoctor
 );
 
 appointmentRoute.route("/employee/:id").get(
-  // adminAndDoctorAuth,
+  adminAndDoctorAuth,
   idAppointmentValidator,
   resultValidator,
   appointmentController.getAppointmentByEmployee
@@ -54,10 +54,10 @@ appointmentRoute
   .route("/:id")
   .all(idAppointmentValidator, resultValidator)
   .get(
-    // allAuth,
+    allAuth,
     appointmentController.getAppointmentById)
   .delete(
-    // adminAuth,
+    adminAuth,
     appointmentController.deleteAppointment);
 
 export default appointmentRoute;

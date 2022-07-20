@@ -5,14 +5,14 @@ import "../models/prescription.model";
 let Prescription = mongoose.model("prescriptions");
 
 export default class PrescriptionController {
-  createPrescription: RequestHandler = (request, response, next) => {
+  createPrescription: RequestHandler = (request: any, response, next) => {
     console.log("createPrescription controller");
     let object = new Prescription({
       _id: new mongoose.Types.ObjectId(),
-      doctor: request.body.doctor, //will be taken from request.id
+      doctor: request.id,
       patient: request.body.patient,
       medicines: request.body.medicines,
-      date: request.body.date,
+      notes: request.body.notes,
     });
     object
       .save()
@@ -22,14 +22,16 @@ export default class PrescriptionController {
       .catch((error) => next(error));
   };
 
-  updatePrescription: RequestHandler = (request, response, next) => {
+  updatePrescription: RequestHandler = (request: any, response, next) => {
     console.log("updatePrescription controller");
     Prescription.findOne({ _id: request.params.id })
       .then((data: any) => {
         if (!data) next(new Error("prescription not found"));
+        if (data.doctor != request.id)
+          next(new Error("you're not authorized to update this prescription"));
         for (let prop in request.body) {
           if (!(prop == "doctor" || prop == "patient"))
-            data[prop] = request.body[prop];
+            data[prop] = request.body[prop] || data[prop];
         }
         return data.save().then((data: any) => {
           response.status(200).json({ msg: "prescription updated", data });
@@ -37,21 +39,25 @@ export default class PrescriptionController {
       })
       .catch((error) => next(error));
   };
-  //🔴 may be removed
-  getPrescription: RequestHandler = (request, response, next) => {
+
+  getPrescription: RequestHandler = (request: any, response, next) => {
     console.log("getPrescription controller");
     Prescription.findOne({ _id: request.params.id })
       .populate({ path: "doctor", select: "fullName" })
-      // .populate({ path: "patient", select: "fullName" })
-      // .populate({ path: "medicines.id" })
+      .populate({ path: "patient", select: "fullName" })
+      .populate({ path: "medicines", select: "tradeName" }) //🔴Hamdy
       .then((data: any) => {
         if (!data) throw Error("prescription not found");
+        if (request.role == "doctor") {
+          if (data.doctor != request.id)
+            next(new Error("you're not authorized to get this prescription"));
+        }
         response.status(200).json({ msg: "prescription get", data });
       })
       .catch((error) => next(error));
   };
 
-  deletePrescription: RequestHandler = (request, response, next) => {
+  deletePrescription: RequestHandler = (request: any, response, next) => {
     console.log("deletePrescription controller");
     Prescription.deleteOne({ _id: request.params.id })
       .then((data: any) => {
@@ -69,7 +75,7 @@ export default class PrescriptionController {
         if (key == "doctor" || key == "patient") {
           sortingObj[key + ".fullName"] = 1;
         } else if (key == "date") {
-          sortingObj[key] = 1;
+          sortingObj["createdAt"] = 1;
         }
       }
     }

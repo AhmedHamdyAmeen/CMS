@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Schema } from "mongoose";
 
 import IDoctor, { EDepartment, EGender } from "../interfaces/doctor.interface";
+import { locationSchema } from "./location.model";
 import {
   validateEmail,
   validatePassword,
@@ -22,7 +23,6 @@ const doctorSchema = new Schema<IDoctor>({
   department: {
     type: String,
     enum: EDepartment,
-    required: true,
   },
   email: {
     type: String,
@@ -39,9 +39,7 @@ const doctorSchema = new Schema<IDoctor>({
     type: String,
     // validate: [validatePhoneNumber, "Please fill a valid phone number"],
   },
-  image: {
-    type: String,
-  },
+  address: locationSchema,
   gender: {
     type: String,
     enum: EGender,

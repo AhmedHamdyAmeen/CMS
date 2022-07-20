@@ -22,10 +22,6 @@ export let post = [
     .optional()
     .isString()
     .withMessage("patient address should be string"),
-  check("state")
-    .optional()
-    .isString()
-    .withMessage("patient state should be string"),
   check("city")
     .optional()
     .isString()
@@ -63,10 +59,6 @@ export let put = [
     .optional()
     .isString()
     .withMessage("patient address should be string"),
-  check("state")
-    .optional()
-    .isString()
-    .withMessage("patient state should be string"),
   check("city")
     .optional()
     .isString()
@@ -82,7 +74,7 @@ export let put = [
     .isString()
     .withMessage("patient city should be string"),
 ];
-export let getDelete = [
+export let idValidator = [
   check("id")
     .notEmpty()
     .withMessage("patient id is required")
@@ -96,4 +88,12 @@ export let addServices = [
     .withMessage("patient services is required")
     .isArray({ min: 1 })
     .withMessage("patient services should be array & min 1 service"),
+];
+
+export let removeServices = [
+  check("service")
+    .notEmpty()
+    .withMessage("patient service is required")
+    .isMongoId()
+    .withMessage("invalid service value"),
 ];

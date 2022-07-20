@@ -12,12 +12,13 @@ export default class PatientController {
       fullName: request.body.fullName,
       age: request.body.age,
       gender: request.body.gender,
-      location: {
+      address: {
         address: request.body.address,
         city: request.body.city,
-        state: request.body.state,
       },
       phoneNumber: request.body.phoneNumber,
+      appointments: request.body.appointments,
+      services: request.body.services, //🔴Mohab
       notes: request.body.notes,
     });
     object
@@ -34,8 +35,8 @@ export default class PatientController {
       .then((data: any) => {
         if (!data) next(new Error("patient not found"));
         for (let prop in request.body) {
-          if (prop == "address" || prop == "city" || prop == "state") {
-            data.location[prop] = request.body[prop] || data.location[prop];
+          if (prop == "address" || prop == "city") {
+            data.address[prop] = request.body[prop] || data.address[prop];
           } else if (prop == "appointments" || prop == "services") continue;
           else data[prop] = request.body[prop] || data[prop];
         }
@@ -55,7 +56,35 @@ export default class PatientController {
           data.services.push(request.body.services[service]);
         }
         return data.save().then((data: any) => {
-          response.status(200).json({ msg: "patient updated", data });
+          response.status(200).json({ msg: "service added", data });
+        });
+      })
+      .catch((error) => next(error));
+  };
+
+  removeServicePatient: RequestHandler = (request, response, next) => {
+    console.log("removeServicePatient controller");
+    Patient.findOne({ _id: request.params.id })
+      .then((data: any) => {
+        if (!data) next(new Error("patient not found"));
+        data.services = data.services.filter(
+          (service: any) => service != request.body.service
+        );
+        return data.save().then((data: any) => {
+          response.status(200).json({ msg: "service added", data });
+        });
+      })
+      .catch((error) => next(error));
+  };
+
+  addAppointmentPatient: RequestHandler = (request, response, next) => {
+    console.log("addAppointmentPatient controller");
+    Patient.findOne({ _id: request.params.id })
+      .then((data: any) => {
+        if (!data) next(new Error("patient not found"));
+        data.appointments.push(request.body.appointment);
+        return data.save().then((data: any) => {
+          response.status(200).json({ msg: "appointment added", data });
         });
       })
       .catch((error) => next(error));

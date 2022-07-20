@@ -15,6 +15,7 @@ export const passwordRegex = new RegExp(
  * valid phone format example: 11-111-1111
  */
 export const phoneRegex = /\d{3}-\d{3}-\d{4}/;
+// export const phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/; //one form of phonenumber (-)
 /**
  * valid fullName format
  */
