@@ -1,61 +1,80 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
-import "dotenv";
+const paypal = require("paypal-rest-sdk");
 
-import medicinesRoute from "./MVC/Routes/medicinesRoute";
+/************ routes */
+import employeeRoute from "./routes/employee.route";
+import appointmentRoute from "./routes/appointment.route";
+import searchRoute from "./routes/search.route";
+import paymentRoute from "./routes/payment.route";
+import authRoute from "./routes/auth.route";
+import toggleRoute from "./routes/toggleRole.route";
 
-// * 1)  Create Server
-const server = express();
+import doctorRoutes from "./routes/doctor.route";
+import prescriptionRoutes from "./routes/prescription.route";
+import patientRoutes from "./routes/patient.route";
+import medicinesRoute from "./routes/medicinesRoute";
 
-// todo: Connect to the DB
+
+paypal.configure({
+  mode: "sandbox", //sandbox or live
+  client_id:
+    "AatXrjo3Fo6-kb7kFwnnFD5umDluOc6BBZtLSv0xF80IBunZ4hSm9BPMzVyAS72iYPpDFi46ldVE76bv",
+  client_secret:
+    "ENGE-m5d8p8VYqqKR5yST78w_KtKf4iDpBt_MWHuQKFtnTmev5E1qNcOWznQc8CwYV5CuuYj23YoLvr9",
+});
+//create server obejct
+const app = express();
+
 mongoose
   .connect(process.env.DB_URL || "mongodb://localhost:27017/CMS")
   .then(() => {
-    console.log("DB Connected");
-
-    // * 2 ) Listen to server and port number
-    const port = process.env.PORT || 8080;
-    server.listen(port, () => {
-      console.log(`Server is running on: http://localhost:${port}`);
+    console.log(`DB Connected. ${process.env.DB_URL}`);
+    //listen to port number
+    app.listen(process.env.PORT || 8080, () => {
+      console.log("Listening on localhost:8080");
     });
   })
-  .catch((error) => {
-    console.log(error);
-  });
+  .catch((error: Error) => console.log("Db Connection Error " + error));
 
-// * 3 ) Create Middleware & Endpoints
-// 3 a) CORS MW
-// CORS => Cross-Origin Resource Sharing
-// It is a package allow the outside domains to connect with node server..
-// CORS must be used before the Rout.
-server.use(cors({ origin: "*" }));
+/****************** MiddleWare *****************/
+//1- MW url and method
+app.use(morgan("dev")); //method-url-status-ms- :res[content-length]
 
-// 3 b) Morgan MW to log the url & method
-server.use(
-  morgan(function (tokens, req, res) {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      // tokens.res(req, res, 'content-length'), '-',
-      // tokens['response-time'](req, res), 'ms'
-    ].join(" ");
-  })
+//2- all users CORS MW
+app.use(cors());
+
+/****************** Routes *****************/
+app.use(express.json()); //body parsing
+
+app.use("/payment", paymentRoute);
+app.use(authRoute);
+app.use("/toggleRole", toggleRoute);
+
+app.use(searchRoute);
+app.use("/employee", employeeRoute);
+app.use("/appointment", appointmentRoute);
+
+app.use("/doctor", doctorRoutes);
+app.use("/prescription", prescriptionRoutes);
+app.use("/patient", patientRoutes);
+app.use(medicinesRoute);
+
+//3- Not Found MW
+app.use((request: Request, response: Response) => {
+  console.log("Not Found MW");
+  response.status(404).json({ message: "Not Found" });
+});
+
+//4- Error MW
+app.use(
+  (error: Error, request: Request, response: Response, next: NextFunction) => {
+    console.log("Error MW");
+    // let errorStatus = (response.status || 500);
+    response.status(500).json({ message: "Internal Error:\n" + error });
+  }
 );
-
-// ^  EndPoints == Routes ==>
-// communication channel to grab data
-server.use(express.json()); // parse matched json http request bodies =>> express.json() must be before routes
-server.use(medicinesRoute);
-
-// 3 c) Not Found MW
-server.use("/", (request, response, next) => {
-  response.status(404).json({ data: "Not Found" });
-});
-
-// 3 d) Error Handling MW
-server.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({ message: "Internal Error" + error });
-});
