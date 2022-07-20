@@ -1,12 +1,6 @@
 import mongoose, { Schema, model, Types } from "mongoose";
 
-interface IMedicines {
-  _id: Types.ObjectId;
-  tradeName: String;
-  scientificName: String;
-  type: String;
-  cost: Number;
-}
+import { IMedicines } from "../interfaces/medicines.interface";
 
 const medicinesSchema = new Schema<IMedicines>({
   _id: {
