@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import mongoose from "mongoose";
 
-import services from '../models/clinicServies'
+import services from '../models/services.model'
 
 export default class ServiceController {
     getAllService(request: Request, response: Response, next: NextFunction){

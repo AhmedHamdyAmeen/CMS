@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import invoices from "../models/invoices";
+import invoices from "../models/invoices.model";
 import mongoose from "mongoose";
 
 export default class InvoicesController {
@@ -14,12 +14,12 @@ export default class InvoicesController {
       });
   };
 
+  //function to update isready state
   getoneInvoices = (req: Request, res: Response, next: NextFunction) => {
     invoices
-      .findOne({ _id: req.params.id })
-      // .populate({ path: "doctors", select: "fullName" })
-      // .populate({path:"patients",select:"fullName"})
-      // .populate({path:"medicines",select:"tradeName cost"})
+      .findOne({ _id: req.params.id }) //by patient
+      .populate({ path: "doctors", select: "fullName" })
+      .populate({path:"patients",select:"fullName"})
       .populate({ path: "services", select: "name" })
 
       .then((data) => {
@@ -33,13 +33,12 @@ export default class InvoicesController {
   createInvoices = (req: Request, res: Response, next: NextFunction) => {
     let invoicesObject = new invoices({
       _id: new mongoose.Types.ObjectId(),
-      // doctors:req.body.doctors,
-      // patients:req.body.patients,
-      // medicines:req.body.medicines,
+      doctors:req.body.doctors,
+      patients:req.body.patients,
       paymentMethod: req.body.paymentMethod,
       services: req.body.services,
       totalCost: req.body.totalCost,
-      isPaid: req.body.isPaid,
+      
     });
     invoicesObject
       .save()
