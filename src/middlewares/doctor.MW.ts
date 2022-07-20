@@ -1,69 +1,6 @@
 import { check } from "express-validator";
 import { Request, Response, NextFunction } from "express";
-
-export let post = [
-  (request: Request, response: Response, next: NextFunction) => {
-    console.log("validationMW");
-    next();
-  },
-  check("fullName")
-    .notEmpty()
-    .withMessage("doctor fullName is required")
-    .isString()
-    .withMessage("doctor fullName should be string"),
-  check("department")
-    .notEmpty()
-    .withMessage("doctor department is required")
-    .isString()
-    .withMessage("doctor department should be string")
-    .isIn([
-      "Dermatology",
-      "Pathology",
-      "Neorolgy",
-      "Oncology",
-      "ENT",
-      "Radiology",
-      "Dentistry",
-      "Ophthalmology",
-    ]).withMessage(`doctor department should be in ("Dermatology",
-    "Pathology",
-    "Neorolgy",
-    "Oncology",
-    "ENT",
-    "Radiology",
-    "Dentistry",
-    "Ophthalmology")`),
-  check("email")
-    .notEmpty()
-    .withMessage("doctor email is required")
-    .isEmail()
-    .withMessage("doctor email should be email"),
-  check("password")
-    .notEmpty()
-    .withMessage("doctor password is required")
-    .isString()
-    .withMessage("doctor password should be string")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/
-    )
-    .withMessage(
-      "doctor password should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
-    ),
-  check("phoneNumber")
-    .isNumeric()
-    .optional()
-    .withMessage("doctor phoneNumber should be number")
-    .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/) //🔴rania
-    .withMessage("doctor phone number should be valid"),
-  check("image")
-    .isString()
-    .optional()
-    .withMessage("doctor image should be string"),
-  check("gender")
-    .isIn(["Male", "Female"])
-    .optional()
-    .withMessage(`doctor gender should be either "Male" or "Female"`),
-];
+import { phoneRegex } from "./../helpers/regex";
 
 export let put = [
   (request: Request, response: Response, next: NextFunction) => {
@@ -101,10 +38,10 @@ export let put = [
     "Dentistry",
     "Ophthalmology",)`),
   check("phoneNumber")
-    .isNumeric()
+    .isString()
     .optional()
     .withMessage("doctor phoneNumber should be number")
-    .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/) //🔴rania
+    .matches(phoneRegex)
     .withMessage("doctor phone number should be valid"),
   check("image")
     .isString()
@@ -126,63 +63,4 @@ export let idValidator = [
     .withMessage("doctor id is required")
     .isMongoId()
     .withMessage("doctor id should be mongoId"),
-];
-
-export let forgotPassword = [
-  (request: Request, response: Response, next: NextFunction) => {
-    console.log("validationMW");
-    next();
-  },
-  check("email")
-    .notEmpty()
-    .withMessage("doctor email is required")
-    .isEmail()
-    .withMessage("doctor email should be valid email"),
-];
-
-export let resetPassword = [
-  (request: Request, response: Response, next: NextFunction) => {
-    console.log("validationMW");
-    next();
-  },
-  check("token")
-    .notEmpty()
-    .withMessage("doctor token is required")
-    .isString()
-    .withMessage("doctor token should be string"),
-
-  check("newPassword")
-    .notEmpty()
-    .withMessage("doctor newPassword is required")
-    .isString()
-    .withMessage("doctor newPassword should be string")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/
-    )
-    .withMessage(
-      "doctor newPassword should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
-    ),
-];
-
-export let login = [
-  (request: Request, response: Response, next: NextFunction) => {
-    console.log("validationMW");
-    next();
-  },
-  check("email")
-    .notEmpty()
-    .withMessage("doctor email is required")
-    .isEmail()
-    .withMessage("doctor email should be valid email"),
-  check("password")
-    .notEmpty()
-    .withMessage("doctor password is required")
-    .isString()
-    .withMessage("doctor password should be string"),
-  // .matches(
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/
-  // )
-  // .withMessage(
-  //   "doctor password should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
-  // ),
 ];

@@ -18,7 +18,7 @@ const doctorSchema = new Schema<IDoctor>({
   fullName: {
     type: String,
     required: true,
-    validate: [validateFullName, "Please fill a valid phone number"],
+    validate: [validateFullName, "Please fill a valid full name"],
   },
   department: {
     type: String,
@@ -37,7 +37,7 @@ const doctorSchema = new Schema<IDoctor>({
   },
   phoneNumber: {
     type: String,
-    // validate: [validatePhoneNumber, "Please fill a valid phone number"],
+    validate: [validatePhoneNumber, "Please fill a valid phone number"],
   },
   address: locationSchema,
   gender: {

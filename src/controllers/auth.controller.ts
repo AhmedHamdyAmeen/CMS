@@ -19,10 +19,29 @@ const Employee = mongoose.model("employees");
 export default class AuthController {
   login: RequestHandler = (request, response, next) => {
     let User = null;
-    if (request.params.userType == "doctor") {
+    if (request.params.userType == "admin") {
+      if (
+        request.body.email == "admin@gmail.com" &&
+        request.body.password == "Admin*123"
+      ) {
+        let role = "admin";
+        let token = jwt.sign(
+          {
+            role: role,
+          },
+          "mysecret",
+          { expiresIn: "1h" }
+        );
+        response.status(200).json({ token: token, role: role });
+      } else {
+        let error: any = new Error("email or password incorrect");
+        error.status = 401;
+        next(error);
+      }
+    } else if (request.params.userType == "doctor") {
       User = Doctor;
     } else if (request.params.userType == "employee") {
-        User = Employee;
+      User = Employee;
     } else {
       next(new Error("invalid user type!"));
     }
@@ -83,7 +102,7 @@ export default class AuthController {
     if (request.params.userType == "doctor") {
       User = Doctor;
     } else if (request.params.userType == "employee") {
-        User = Employee;
+      User = Employee;
     } else {
       next(new Error("invalid user type!"));
     }
@@ -96,10 +115,7 @@ export default class AuthController {
             if (bcrypt.compareSync(request.body.password, data.password)) {
               next(new Error("old password can't be the same old password"));
             }
-            data.password = bcrypt.hashSync(
-              request.body.password,
-              saltRounds
-            );
+            data.password = bcrypt.hashSync(request.body.password, saltRounds);
             return data.save().then((data: any) => {
               response.status(200).json({ msg: "user changed password" });
             });
@@ -139,16 +155,19 @@ export default class AuthController {
           Hello ${user.fullName},
           
           Please click on the given link to reset password..
-        <a href="http://localhost:8080/authentication/resetPassword/${token}">Reset Password</a>
+        <a href="http://localhost:8080/resetPassword/${request.params.userType}/${token}">Reset Password</a>
           If you didn't try reset yor password, ignore this email.
           </pre>
         `,
         };
-        user.resetLink = token;
+
         mg.messages().send(data, function (error: any) {
           if (error) next(error);
-          response.status(200).json({
-            data: "Reset Password link has been sent to your Email, kindly check your mail and follow the instructions",
+          user.resetLink = token;
+          user.save().then(() => {
+            response.status(200).json({
+              data: "Reset Password link has been sent to your Email, kindly check your mail and follow the instructions",
+            });
           });
         });
       })
@@ -161,7 +180,7 @@ export default class AuthController {
     if (request.params.userType == "doctor") {
       User = Doctor;
     } else if (request.params.userType == "employee") {
-        User = Employee;
+      User = Employee;
     } else {
       next(new Error("invalid user type!"));
     }

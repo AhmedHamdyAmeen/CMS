@@ -3,6 +3,54 @@ import { Request, Response, NextFunction } from "express";
 
 import { passwordRegex } from "./../helpers/regex";
 
+export let signUp = [
+  (request: Request, response: Response, next: NextFunction) => {
+    console.log("validationMW");
+    next();
+  },
+  check("fullName")
+    .notEmpty()
+    .withMessage("user fullName is required")
+    .isString()
+    .withMessage("user fullName should be string"),
+  check("department")
+    .notEmpty()
+    .withMessage("user department is required")
+    .isString()
+    .withMessage("user department should be string")
+    .isIn([
+      "Dermatology",
+      "Pathology",
+      "Neorolgy",
+      "Oncology",
+      "ENT",
+      "Radiology",
+      "Dentistry",
+      "Ophthalmology",
+    ]).withMessage(`user department should be in ("Dermatology",
+    "Pathology",
+    "Neorolgy",
+    "Oncology",
+    "ENT",
+    "Radiology",
+    "Dentistry",
+    "Ophthalmology")`),
+  check("email")
+    .notEmpty()
+    .withMessage("user email is required")
+    .isEmail()
+    .withMessage("user email should be email"),
+  check("password")
+    .notEmpty()
+    .withMessage("user password is required")
+    .isString()
+    .withMessage("user password should be string")
+    .matches(passwordRegex)
+    .withMessage(
+      "user password should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+    ),
+];
+
 export let forgotPassword = [
   (request: Request, response: Response, next: NextFunction) => {
     console.log("validationMW");
@@ -10,9 +58,9 @@ export let forgotPassword = [
   },
   check("email")
     .notEmpty()
-    .withMessage("doctor email is required")
+    .withMessage("user email is required")
     .isEmail()
-    .withMessage("doctor email should be valid email"),
+    .withMessage("user email should be valid email"),
 ];
 
 export let resetPassword = [
@@ -22,20 +70,18 @@ export let resetPassword = [
   },
   check("token")
     .notEmpty()
-    .withMessage("doctor token is required")
+    .withMessage("user token is required")
     .isString()
-    .withMessage("doctor token should be string"),
+    .withMessage("user token should be string"),
 
   check("newPassword")
     .notEmpty()
-    .withMessage("doctor newPassword is required")
+    .withMessage("user newPassword is required")
     .isString()
-    .withMessage("doctor newPassword should be string")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/
-    )
+    .withMessage("user newPassword should be string")
+    .matches(passwordRegex)
     .withMessage(
-      "doctor newPassword should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+      "user newPassword should be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"
     ),
 ];
 

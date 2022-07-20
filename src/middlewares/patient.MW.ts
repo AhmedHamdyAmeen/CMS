@@ -1,5 +1,6 @@
 import { check } from "express-validator";
 import { Request, Response, NextFunction } from "express";
+import { phoneRegex } from "../helpers/regex";
 
 export let post = [
   (request: Request, response: Response, next: NextFunction) => {
@@ -27,10 +28,10 @@ export let post = [
     .isString()
     .withMessage("patient city should be string"),
   check("phoneNumber")
-    .isNumeric()
+    .isString()
     .optional()
-    .withMessage("patient phoneNumber should be number")
-    .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/) //🟢rania
+    .withMessage("patient phoneNumber should be string")
+    .matches(phoneRegex)
     .withMessage("patient phone number should be valid"),
   check("notes")
     .optional()
@@ -64,10 +65,10 @@ export let put = [
     .isString()
     .withMessage("patient city should be string"),
   check("phoneNumber")
-    .isNumeric()
+    .isString()
     .optional()
-    .withMessage("patient phoneNumber should be number")
-    .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/) //🔴rania
+    .withMessage("patient phoneNumber should be string")
+    .matches(phoneRegex)
     .withMessage("patient phone number should be valid"),
   check("notes")
     .optional()

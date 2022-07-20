@@ -45,7 +45,7 @@ export default class PrescriptionController {
     Prescription.findOne({ _id: request.params.id })
       .populate({ path: "doctor", select: "fullName" })
       .populate({ path: "patient", select: "fullName" })
-      .populate({ path: "medicines", select: "tradeName" }) //🔴Hamdy
+      // .populate({ path: "medicines", select: "tradeName" }) //🔴Hamdy
       .then((data: any) => {
         if (!data) throw Error("prescription not found");
         if (request.role == "doctor") {

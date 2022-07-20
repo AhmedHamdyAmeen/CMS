@@ -1,4 +1,4 @@
-import { EDepartment } from './../interfaces/doctor.interface';
+import { EDepartment } from "./../interfaces/doctor.interface";
 const { check } = require("express-validator");
 
 import {
@@ -35,10 +35,11 @@ export const postEmployeeValidator = [
   //department
   check("department")
     .notEmpty()
-    .withMessage("doctor department is required")
+    .withMessage("employee department is required")
     .isString()
-    .withMessage("doctor department should be string")
-    .isIn(EDepartment).withMessage(`doctor department should be in ("Dermatology",
+    .withMessage("employee department should be string")
+    .isIn(EDepartment)
+    .withMessage(`employee department should be in ("Dermatology",
     "Pathology",
     "Neorolgy",
     "Oncology",

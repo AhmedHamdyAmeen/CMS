@@ -10,10 +10,6 @@ const router = Router();
 
 router.use(auth, adminAuth, idValidator, resultValidator);
 
-router.route("/toggleDoctorRole").get(toggleRoleController.toggleDoctorRole);
-
-router
-  .route("/toggleEmployeeRole")
-  .get(toggleRoleController.toggleEmployeeRole);
+router.route("/:userType").post(toggleRoleController.toggleRole);
 
 export default router;

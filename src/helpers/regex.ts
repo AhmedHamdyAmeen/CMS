@@ -19,4 +19,6 @@ export const phoneRegex = /\d{3}-\d{3}-\d{4}/;
 /**
  * valid fullName format
  */
-export const fullNameRegex = new RegExp("(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})");
+export const fullNameRegex = new RegExp(
+  "(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})"
+);

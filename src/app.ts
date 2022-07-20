@@ -12,6 +12,7 @@ import appointmentRoute from "./routes/appointment.route";
 import searchRoute from "./routes/search.route";
 import paymentRoute from "./routes/payment.route";
 import authRoute from "./routes/auth.route";
+import toggleRoute from "./routes/toggleRole.route";
 
 import doctorRoutes from "./routes/doctor.route";
 import prescriptionRoutes from "./routes/prescription.route";
@@ -50,6 +51,7 @@ app.use(express.json()); //body parsing
 
 app.use("/payment", paymentRoute);
 app.use(authRoute);
+app.use("/toggleRole", toggleRoute);
 
 app.use(searchRoute);
 app.use("/employee", employeeRoute);
